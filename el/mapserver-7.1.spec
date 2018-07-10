@@ -1,7 +1,7 @@
 %define MS_REL %{nil}
 
 Name:           mapserver%{MS_REL}
-Version:        7.0.0
+Version:        7.1.0filters
 Release:        1%{?dist}
 Summary:        Environment for building spatially-enabled internet applications
 
@@ -9,14 +9,14 @@ Group:          Development/Tools
 License:        BSD
 URL:            http://www.mapserver.org
 
-Source0:        file:///tmp/mapserver-7.0.0.tar.gz
+Source0:        file:///tmp/mapserver-7.1.0.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       httpd
 Requires:       dejavu-sans-fonts
 
-BuildRequires:  cmake make gcc gcc-c++
+BuildRequires:  cmake 
 BuildRequires:  libXpm-devel readline-devel librsvg2-devel
 BuildRequires:  httpd-devel php-devel libxslt-devel pam-devel fcgi-devel
 BuildRequires:  perl(ExtUtils::MakeMaker)
@@ -120,7 +120,8 @@ pushd build
        -DWITH_WCS=ON \
        -DWITH_LIBXML2=ON \
        -DWITH_THREAD_SAFETY=ON \
-       -DWITH_GIF=ON ..
+       -DWITH_GIF=ON .. \
+       -DCMAKE_INSTALL_LIBDIR=lib64
 
 make
 popd
@@ -158,9 +159,12 @@ done
 mkdir -p %{buildroot}%{perl_vendorarch}
 mv  %{buildroot}/usr/local/lib64/perl5/* %{buildroot}%{perl_vendorarch} 
 
+# Hack stuff in usr/lib to the expected usr/lib64
+mv %{buildroot}/usr/lib/* %{buildroot}%{_libdir}
+
 %files
 %defattr(-,root,root)
-%doc README COMMITERS HISTORY.TXT  
+%doc README HISTORY.TXT  
 %doc INSTALL MIGRATION_GUIDE.txt
 %doc symbols tests
 %doc fonts
@@ -175,10 +179,11 @@ mv  %{buildroot}/usr/local/lib64/perl5/* %{buildroot}%{perl_vendorarch}
 %{_bindir}/tile4ms%{MS_REL}
 %{_libdir}/libmapserver.so
 %{_libdir}/libmapserver.so.2
-%{_libdir}/libmapserver.so.%{version}
+%{_libdir}/libmapserver.so.7.1-dev
 %{_libexecdir}/mapserv
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*
+/usr/include/mapserver/*
 
 %files -n php-%{name}
 %defattr(-,root,root)
