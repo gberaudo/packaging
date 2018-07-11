@@ -33,3 +33,11 @@ On a brand new "Enterprise Linux" installation (tested with official Dockerimage
     yum-builddep -y mapserver-7.0.spec
     QA_RPATHS=$[ 0x0001|0x0002 ] rpmbuild -ba --target x86_64 mapserver-7.0.spec
 
+
+Instructions to build RPMs for Mapserver 7.2
+============================================
+
+    git clone https://github.com/mapserver/packaging.git
+    cd packaging/el/
+    spectool -g -C ~/rpmbuild/SOURCES mapserver-7.2.spec
+    PATH=/usr/pgsql-9.4/bin:$PATH QA_RPATHS=$[ 0x0001|0x0002 ] rpmbuild -ba --target x86_64 mapserver-7.2.spec
